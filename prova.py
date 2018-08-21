@@ -6,10 +6,9 @@ import argparse
 import sys
 
 import tensorflow as tf
+#from tensorflow import keras
 #mnist = tf.keras.datasets.mnist
-from tensorflow.examples.tutorials.mnist import input_data
 
-FLAGS = None
 
 
 def weight_variable(shape):
@@ -27,7 +26,7 @@ def max_pool_2x2(x):
   return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
                         strides=[1, 2, 2, 1], padding='SAME')
 
-def main(_):
+#def main(_):
    # Input layer
    x  = tf.placeholder(tf.float32, [None, 784], name='x')
    y_ = tf.placeholder(tf.float32, [None, 10],  name='y_')
@@ -77,7 +76,7 @@ def main(_):
    # Training steps
    with tf.Session() as sess:
      sess.run(tf.global_variables_initializer())
-     mnist = input_data.read_data_sets(FLAGS.data_dir)
+     #mnist = input_data.read_data_sets(FLAGS.data_dir)
 
      max_steps = 1000
      for step in range(max_steps):
