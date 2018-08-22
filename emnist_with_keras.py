@@ -1,11 +1,14 @@
 from collections import Counter
 
+import tensorflow as tf
+from tensorflow import data
 import keras
 from keras import backend as K
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Dense, Dropout, Flatten
 from keras.models import Sequential
 #from sklearn.model_selection import train_test_split
+import numpy as np
 
 import dataset
 import os
@@ -18,8 +21,8 @@ img_rows, img_cols = 28, 28
 print('Start loading data.')
 #Da modificar
 folder_path = os.getcwd()
-pro = dataset.train(folder_path +'\emnist')
-va = dataset.test(folder_path +'\emnist')
+train_dataset = dataset.train(folder_path +'\emnist')
+test_dataset = dataset.test(folder_path +'\emnist')
 print('Data has been loaded.')
 
 #Non so se le reshape dei tensor x e y contenenti train e test vadano fatte
@@ -62,3 +65,6 @@ model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
 
 model.add(Dense(num_classes, activation='softmax'))
+
+dataset = dataset.batch(batch_size=batch_size)
+dataset = dataset.repeat(epochs)
