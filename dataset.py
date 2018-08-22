@@ -62,6 +62,7 @@ def check_labels_file_header(filename):
 def load(directory, filename):
   """Download (and unzip) a file from the MNIST dataset if not already done."""
   filepath = os.path.join(directory, filename)
+  print(filepath)
   if tf.gfile.Exists(filepath):
     return filepath
 
@@ -96,8 +97,8 @@ def dataset(directory, images_file, labels_file):
 
 def train(directory):
   """tf.data.Dataset object."""
-  return dataset(directory, 'emnist-mnist-train-images-idx3-ubyte',
-                 'emnist-mnist-train-labels-idx1-ubyte')
+  return dataset(directory, 'emnist-byclass-train-images-idx3-ubyte',
+                 'emnist-byclass-train-labels-idx1-ubyte')
 
 
 def test(directory):

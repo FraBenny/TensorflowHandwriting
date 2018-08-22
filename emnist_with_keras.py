@@ -8,6 +8,7 @@ from keras.models import Sequential
 #from sklearn.model_selection import train_test_split
 
 import dataset
+import os
 
 batch_size = 64
 num_classes = 62
@@ -16,8 +17,9 @@ img_rows, img_cols = 28, 28
 
 print('Start loading data.')
 #Da modificar
-(x_train, y_train) = dataset.train('emnist')
-(x_test, y_test) = dataset.test('emnist')
+folder_path = os.getcwd()
+pro = dataset.train(folder_path +'\emnist')
+va = dataset.test(folder_path +'\emnist')
 print('Data has been loaded.')
 
 #Non so se le reshape dei tensor x e y contenenti train e test vadano fatte
