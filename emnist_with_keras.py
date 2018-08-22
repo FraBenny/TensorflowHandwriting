@@ -16,7 +16,8 @@ img_rows, img_cols = 28, 28
 
 print('Start loading data.')
 #Da modificare
-(x_train, y_train), (x_test, y_test) = load()
+(x_train, y_train) = dataset.train('emnist')
+(x_test, y_test) = dataset.test('emnist')
 print('Data has been loaded.')
 
 #Non so se le reshape dei tensor x e y contenenti train e test vadano fatte

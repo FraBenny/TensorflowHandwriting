@@ -96,10 +96,10 @@ def dataset(directory, images_file, labels_file):
 
 def train(directory):
   """tf.data.Dataset object."""
-  return dataset(directory, 'train-images-idx3-ubyte',
-                 'train-labels-idx1-ubyte')
+  return dataset(directory, 'emnist-mnist-train-images-idx3-ubyte',
+                 'emnist-mnist-train-labels-idx1-ubyte')
 
 
 def test(directory):
   """tf.data.Dataset object."""
-  return dataset(directory, 't10k-images-idx3-ubyte', 't10k-labels-idx1-ubyte')
+  return dataset(directory, 'emnist-byclass-test-images-idx3-ubyte', 'emnist-byclass-test-labels-idx1-ubyte')
