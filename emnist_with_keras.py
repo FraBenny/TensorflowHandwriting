@@ -15,7 +15,7 @@ epochs = 10
 img_rows, img_cols = 28, 28
 
 print('Start loading data.')
-#Da modificare
+#Da modificar
 (x_train, y_train) = dataset.train('emnist')
 (x_test, y_test) = dataset.test('emnist')
 print('Data has been loaded.')
