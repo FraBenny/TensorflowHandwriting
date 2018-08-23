@@ -1,5 +1,6 @@
 from collections import Counter
 
+from mnist import MNIST
 import tensorflow as tf
 from tensorflow import data
 import keras
