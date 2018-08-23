@@ -27,21 +27,21 @@ print('Data has been loaded.')
 
 #Non so se le reshape dei tensor x e y contenenti train e test vadano fatte
 if K.image_data_format() == 'channels_first':
-    x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
-    x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
+    #x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
+    #x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
     input_shape = (1, img_rows, img_cols)
 else:
-    x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
-    x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
+    #x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
+    #x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
     input_shape = (img_rows, img_cols, 1)
 
-print('x_train shape:', x_train.shape)
+"""print('x_train shape:', x_train.shape)
 print(x_train.shape[0], 'train samples')
-print(x_test.shape[0], 'test samples')
+print(x_test.shape[0], 'test samples')"""
 
 # Convert class vectors to binary class matrices. (Non sono sicuro vadano fatte)
-y_train = keras.utils.to_categorical(y_train, num_classes)
-y_test = keras.utils.to_categorical(y_test, num_classes)
+"""y_train = keras.utils.to_categorical(y_train, num_classes)
+y_test = keras.utils.to_categorical(y_test, num_classes)"""
 
 #Non so bene cosa faccia, credo non serva
 #https://github.com/alexander-fischer/tensorflow-char74-example/blob/master/helpers.py
@@ -66,5 +66,22 @@ model.add(Dropout(0.5))
 
 model.add(Dense(num_classes, activation='softmax'))
 
-dataset = dataset.batch(batch_size=batch_size)
-dataset = dataset.repeat(epochs)
+
+train_dataset = train_dataset.batch(32).repeat()
+test_dataset = test_dataset.batch(32).repeat()
+
+model.fit(train_dataset, epochs=epochs, steps_per_epoch=30,
+          validation_data=test_dataset,
+          validation_steps=3)
+
+score = model.evaluate(x, y, batch_size=batch_size)
+
+model.evaluate(train_dataset, steps=30)
+
+model.predict(x, batch_size=batch_size)
+
+predictions1 = model.predict(train_dataset, steps=30)
+
+print('Model has been trained.')
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
