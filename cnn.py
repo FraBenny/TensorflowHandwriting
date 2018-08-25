@@ -1,5 +1,6 @@
 import numpy as np
-
+from os import getcwd
+from keras import callbacks
 from keras.models import Sequential, load_model
 from keras.layers import Convolution2D, MaxPooling2D, Dropout, Flatten, Dense
 
@@ -20,7 +21,10 @@ class CharRecognizer(object):
             epochs (int): How many times the data should be used to train the model.
         """
         self.build_model()
-        self.model.fit(X, y, batch_size=batch_size, epochs=epochs)
+        callbacks.Callback()
+        checkpoint = callbacks.ModelCheckpoint(filepath=getcwd()+'weights.{epoch:02d}-{val_loss:.2f}.hdf5', monitor='val_loss', verbose=0, save_best_only=False, save_weights_only=False, mode='auto', period=1)
+        self.model.fit(X, y, batch_size=batch_size, epochs=epochs,callbacks=[checkpoint])
+        print(checkpoint)
 
     def evaluate_model(self, X, y):
         """Evaluate the loss and accuracy of the trained model.

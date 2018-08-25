@@ -34,8 +34,8 @@ def main(train):
     cr.evaluate_model(X_train, y_train)
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == 'train':
-        main(train=True)
-    else:
-        main(train=False)
+    #if len(sys.argv) > 1 and sys.argv[1] == 'train':
+    main(train=True)
+    '''else:
+        main(train=False)'''
 
