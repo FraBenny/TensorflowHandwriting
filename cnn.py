@@ -3,6 +3,7 @@ from os import getcwd
 from keras import callbacks
 from keras.models import Sequential, load_model
 from keras.layers import Convolution2D, MaxPooling2D, Dropout, Flatten, Dense
+import h5py
 
 
 class CharRecognizer(object):
@@ -22,8 +23,9 @@ class CharRecognizer(object):
         """
         self.build_model()
         callbacks.Callback()
-        checkpoint = callbacks.ModelCheckpoint(filepath=getcwd()+'weights.{epoch:02d}-{val_loss:.2f}.hdf5', monitor='val_loss', verbose=0, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-        self.model.fit(X, y, batch_size=batch_size, epochs=epochs,callbacks=[checkpoint])
+        checkpoint = callbacks.ModelCheckpoint(filepath=getcwd()+'weights.{epoch:02d}.hdf5', monitor='val_loss', verbose=0, save_best_only=False, save_weights_only=False, mode='auto', period=1)
+        self.model.load_weights(filepath=getcwd()+'weights.04.hdf5', by_name=False)
+        self.model.fit(X, y, batch_size=batch_size, epochs=epochs, callbacks=[checkpoint])
         print(checkpoint)
 
     def evaluate_model(self, X, y):
