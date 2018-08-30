@@ -1,4 +1,3 @@
-import sys
 import numpy as np
 from os import getcwd
 from keras import callbacks
@@ -9,7 +8,6 @@ from keras.utils import np_utils
 
 
 def main(train):
-    # Load all data
     x_train, y_train, x_test, y_test, mapping = load_data('emnist')
     model = None
 
@@ -19,11 +17,11 @@ def main(train):
         train_model(model, x_train, y_train, epochs=10)
 
         # Save the model to 'emnist-cnn.h5'. It can be loaded afterwards with cr.load_model().
-        save_model()
+        model.save('emnist-cnn.h5', overwrite=True)
     else:
         # Load a trained model instead of training a new one.
         try:
-            load_model()
+            model = load_model('emnist-cnn.h5')
         except:
             print('[Error] No trained CNN model found.')
 
@@ -33,10 +31,8 @@ def main(train):
     # Use the CNN model to recognize the characters in the test set.
     preds = read_text(x_test, mapping)
     print(preds)
-
-    # Evaluate how well the CNN model is doing.
-    # If it's not good enough, we can try training it with a higher number of epochs.
     evaluate_model(x_train, y_train)
+
 
 def load_data(path, ):
     # Read all EMNIST test and train data
@@ -72,48 +68,25 @@ def load_data(path, ):
 
 
 def normalize(array):
-    """Normalize an array with data in an interval of [0, 255] to [0, 1].
+    #Normalize an array with data in an interval of [0, 255] to [0, 1].
 
-    Args:
-        array (numpy.ndarray): Data array to be normalized.
-    Returns:
-        Array with all values inside the interval [0, 1].
-    """
     array = array.astype('float32')
     array /= 255
-
     return array
 
 
 def reshape_for_cnn(array, color_channels=1, img_width=28, img_height=28):
-    """Reshape the image data to be used in a Convolutional Neural Network.
-    Args:
-        array (numpy.ndarray): Data to be reshaped.
-    Returns:
-        Reshaped array containing all original data.
-    """
-    return  array.reshape(array.shape[0], color_channels, img_width, img_height)
+      #  Reshaped the array containing all original data.
+    return array.reshape(array.shape[0], color_channels, img_width, img_height)
 
 def preprocess_labels(array, nb_classes):
     """Perform an "one-hot encoding" of a label array (multiclass).
-    Args:
-        array (numpy.ndarray): Array of labels (multiclass).
-        nb_classes: Total number of classes.
-    Returns:
-        One-hot encoded label array.
+         returns a one-hot encoded label array.
     """
     return np_utils.to_categorical(array, nb_classes)
 
 
 def train_model( model, X, y, batch_size=128, epochs=10):
-    """Train a Convolutional Neural Network to recognize handwritten characters.
-
-        Args:
-            X (numpy.ndarray): Training data (EMNIST ByClass dataset)
-            y (numpy.ndarray): Labels of the training data.
-            batch_size (int): How many images the CNN should use at a time.
-            epochs (int): How many times the data should be used to train the model.
-    """
     callbacks.Callback()
     checkpoint = callbacks.ModelCheckpoint(filepath=getcwd()+'weights.{epoch:02d}.hdf5', monitor='val_loss', verbose=0, save_best_only=False, save_weights_only=False, mode='auto', period=1)
     model.load_weights(filepath=getcwd()+'weights.04.hdf5', by_name=False)
@@ -147,16 +120,6 @@ def build_model(nb_classes=62, nb_filters=32, kernel_size=(5, 5), pool_size=(2, 
     model.compile(loss='categorical_crossentropy', optimizer='adamax', metrics=['accuracy'])
 
 
-def save_model(self):
-    """Save the trained model to a file."""
-    self.model.save('emnist-cnn.h5', overwrite=True)
-
-
-def load_model(self):
-    """Load a trained model from a file."""
-    self.model = load_model('emnist-cnn.h5')
-
-
 def read_text(self, data, mapping):
     """Identify handwritten characters in images.
         Args:
@@ -168,6 +131,7 @@ def read_text(self, data, mapping):
     preds = self.model.predict(data)
     preds = np.argmax(preds, axis=1)
     return ''.join(mapping[x] for x in preds)
+
 
 def evaluate_model(self, X, y):
     """Evaluate the loss and accuracy of the trained model.
