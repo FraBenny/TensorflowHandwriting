@@ -6,25 +6,25 @@ import cnn
 def main(train):
     # Carica i dati di emnist
     trainingData, trainingLabels, testData, testLabels, mapping = load_data('emnist')
-    cr = cnn.CharRecognizer()
+    nn = cnn.NeuralNetwork()
 
     if train:
-        cr.train_model(trainingData, trainingLabels, epochs=10)
-        cr.save_model()   #viene eseguito il salvataggio del modello
+        nn.train_model(trainingData, trainingLabels, epochs=10)
+        nn.save_model()   #viene eseguito il salvataggio del modello
     else:
         #nel caso in cui bisogna riprendere l'esecuzione da un certo punto carica il modello dall'apposito file
         try:
-            cr.load_model()
+            nn.load_model()
         except:
             print('[Error] No trained CNN model found.')
 
-    cr.model.summary()
+    nn.model.summary()
 
-    preds = cr.read_text(testData, mapping)
+    preds = nn.read_text(testData, mapping)
     print(preds)
 
     #Si valuta la precisione raggiunta dal modello
-    cr.evaluate_model(trainingData, trainingLabels)
+    nn.evaluate_model(trainingData, trainingLabels)
 
 def load_data(path, ):
     # Vengono caricati dai rispettivi file i training set ed i test set
