@@ -41,11 +41,8 @@ class NeuralNetwork(object):
         return ''.join(mapping[x] for x in prediction)
 
     def build_model(self, classes=62, filters=32, kernel_size=(5, 5), pool_size=(2, 2), input_shape=(1, 28, 28)):
-        """Viene costruito il modello della rete neurale convoluzionale.
-        Args:
-            nb_filters (int): Number of convolutional filters to be used.
-            kernel_size (tuple(int, int)):  Size of the kernel (group of weights shared over the image values).
-            pool_size (tuple(int, int)): Downscale factor for the MaxPooling2D layer.
+        """Viene costruito il modello della rete neurale convoluzionale. Vengono passati come parametri il numero di classi e di filtri
+        da utilizzare, le dimensione del filtro, le dimensioni per il max pooling e la forma dell'input (channel_first)
         """
         self.model = Sequential()
         self.model.add(Convolution2D(int(filters / 2), kernel_size, padding='valid',
