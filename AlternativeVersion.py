@@ -5,28 +5,28 @@ import cnn
 
 def main(train):
     # Carica i dati di emnist
-    trainingData, trainingLabels, testData, testLabels, mapping = load_data('emnist')
+    trainingData, trainingLabels, testData, testLabels, mapping = loadData('emnist')
     nn = cnn.NeuralNetwork()
 
     if train:
-        nn.train_model(trainingData, trainingLabels, epochs=10)
-        nn.save_model()   #viene eseguito il salvataggio del modello
+        nn.train(trainingData, trainingLabels, epochs=10)
+        nn.saveModel()   #viene eseguito il salvataggio del modello
     else:
         #nel caso in cui bisogna riprendere l'esecuzione da un certo punto carica il modello dall'apposito file
         try:
-            nn.load_model()
+            nn.loadModel()
         except:
             print('[Error] No trained CNN model found.')
 
     nn.model.summary()
 
-    preds = nn.read_text(testData, mapping)
+    preds = nn.readText(testData, mapping)
     print(preds)
 
     #Si valuta la precisione raggiunta dal modello
-    nn.evaluate_model(trainingData, trainingLabels)
+    nn.evaluate(trainingData, trainingLabels)
 
-def load_data(path, ):
+def loadData(path, ):
     # Vengono caricati dai rispettivi file i training set ed i test set
     emnistLoader = MNIST(path)
     trainingData, trainingLabels = emnistLoader.load(path + '/emnist-byclass-train-images-idx3-ubyte',
@@ -49,8 +49,8 @@ def load_data(path, ):
     trainingData = normalize(trainingData)
     testData = normalize(testData)
 
-    trainingData = reshape_for_cnn(trainingData)
-    testData = reshape_for_cnn(testData)
+    trainingData = reshape(trainingData)
+    testData = reshape(testData)
 
     trainingLabels = preprocess_labels(trainingLabels, len(mapping))
     testLabels = preprocess_labels(testLabels, len(mapping))
@@ -65,13 +65,13 @@ def normalize(array):
     return array
 
 
-def reshape_for_cnn(array, channels=1, width=28, height=28):
+def reshape(array, channels=1, width=28, height=28):
     #Viene eseguita la reshape delle immagini in modo che queste possano essere usate nella rete
     return array.reshape(array.shape[0], channels, width, height)
 
 
 def preprocess_labels(array, nb_classes):
-   # Returns One-hot encoded label array. #non ho capito bene che fa qua sinceramente
+    # L'array di etichette viene trasformato in un vettore one-hot
     return np_utils.to_categorical(array, nb_classes)
 
 
