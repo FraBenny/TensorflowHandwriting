@@ -11,7 +11,7 @@ def main(train):
 
     if train:
         # Train the Convolutional Neural Network
-        cr.train_model(X_train, y_train, epochs=10)
+        cr.train_model(X_train, y_train, epochs=1)
 
         # Save the model to 'emnist-cnn.h5'. It can be loaded afterwards with cr.load_model().
         cr.save_model()

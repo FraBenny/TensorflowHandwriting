@@ -1,12 +1,12 @@
 import numpy as np
 from mnist import MNIST
 from keras.utils import np_utils
-import cnn
+import cnn_nuovo
 
 def main(train):
     # Carica i dati di emnist
     trainingData, trainingLabels, testData, testLabels, mapping = loadData('emnist')
-    nn = cnn.NeuralNetwork()
+    nn = cnn_nuovo.NeuralNetwork()
 
     if train:
         nn.train(trainingData, trainingLabels, epochs=10)
