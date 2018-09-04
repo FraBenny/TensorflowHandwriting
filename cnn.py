@@ -2,8 +2,8 @@ import numpy as np
 from os import getcwd
 from keras import callbacks
 from keras.models import Sequential, load_model
-from keras.layers import Convolution2D, MaxPooling2D, Dropout, Flatten, Dense
-
+from keras.layers import Convolution2D, MaxPooling2D, Dropout, Flatten, Dense, ZeroPadding2D
+import h5py
 
 
 class CharRecognizer(object):
@@ -66,10 +66,11 @@ class CharRecognizer(object):
             kernel_size (tuple(int, int)):  Size of the kernel (group of weights shared over the image values).
             pool_size (tuple(int, int)): Downscale factor for the MaxPooling2D layer.
             input_shape (tuple(int, int, int)): Shape of the images as (# of color channels, width, height).
-
+            """
         weights_path = 'emnist/vgg16_weights.h5'
+        img_width, img_height = 150, 150
 
-        # build the VGG16 network
+            # build the VGG16 network
         bottomModel = Sequential()
         bottomModel.add(ZeroPadding2D((1, 1), input_shape=(3, img_width, img_height)))
         bottomModel.add(Convolution2D(64, 3, 3, activation='relu', name='conv1_1'))
@@ -113,24 +114,26 @@ class CharRecognizer(object):
         # and your weight savefile, you can simply call model.load_weights(filename)
         f = h5py.File(weights_path)
         for k in range(f.attrs['nb_layers']):
-            if k >= len(model.layers):
+            if k >= len(bottomModel.layers):
                 # we don't look at the last (fully-connected) layers in the savefile
                 break
             g = f['layer_{}'.format(k)]
             weights = [g['param_{}'.format(p)] for p in range(g.attrs['nb_params'])]
-            model.layers[k].set_weights(weights)
+            bottomModel.layers[k].set_weights(weights)
         f.close()
         print('Model loaded.')
-           """
+
+
         self.model = Sequential()
-        self.model.add(Convolution2D(int(nb_filters / 2), kernel_size, padding='valid',
+        self.model.add(bottomModel)
+        """"" self.model.add(Convolution2D(int(nb_filters / 2), kernel_size, padding='valid',
                                 input_shape=input_shape, activation='relu',
                                 kernel_initializer='he_normal', data_format = 'channels_first'))
         self.model.add(MaxPooling2D(pool_size=pool_size))
         self.model.add(Convolution2D(nb_filters, kernel_size, activation='relu',
                                 kernel_initializer='he_normal', data_format = 'channels_first'))
         self.model.add(MaxPooling2D(pool_size=pool_size))
-
+        """
         self.model.add(Flatten())
         self.model.add(Dense(250, activation='relu', kernel_initializer='he_normal'))
         self.model.add(Dropout(0.1))
