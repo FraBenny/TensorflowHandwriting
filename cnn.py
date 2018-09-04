@@ -66,7 +66,62 @@ class CharRecognizer(object):
             kernel_size (tuple(int, int)):  Size of the kernel (group of weights shared over the image values).
             pool_size (tuple(int, int)): Downscale factor for the MaxPooling2D layer.
             input_shape (tuple(int, int, int)): Shape of the images as (# of color channels, width, height).
-        """
+
+        weights_path = 'emnist/vgg16_weights.h5'
+
+        # build the VGG16 network
+        bottomModel = Sequential()
+        bottomModel.add(ZeroPadding2D((1, 1), input_shape=(3, img_width, img_height)))
+        bottomModel.add(Convolution2D(64, 3, 3, activation='relu', name='conv1_1'))
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(64, 3, 3, activation='relu', name='conv1_2'))
+        bottomModel.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(128, 3, 3, activation='relu', name='conv2_1'))
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(128, 3, 3, activation='relu', name='conv2_2'))
+        bottomModel.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(256, 3, 3, activation='relu', name='conv3_1'))
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(256, 3, 3, activation='relu', name='conv3_2'))
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(256, 3, 3, activation='relu', name='conv3_3'))
+        bottomModel.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(512, 3, 3, activation='relu', name='conv4_1'))
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(512, 3, 3, activation='relu', name='conv4_2'))
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(512, 3, 3, activation='relu', name='conv4_3'))
+        bottomModel.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(512, 3, 3, activation='relu', name='conv5_1'))
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(512, 3, 3, activation='relu', name='conv5_2'))
+        bottomModel.add(ZeroPadding2D((1, 1)))
+        bottomModel.add(Convolution2D(512, 3, 3, activation='relu', name='conv5_3'))
+        bottomModel.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+        # load the weights of the VGG16 networks
+        # (trained on ImageNet, won the ILSVRC competition in 2014)
+        # note: when there is a complete match between your model definition
+        # and your weight savefile, you can simply call model.load_weights(filename)
+        f = h5py.File(weights_path)
+        for k in range(f.attrs['nb_layers']):
+            if k >= len(model.layers):
+                # we don't look at the last (fully-connected) layers in the savefile
+                break
+            g = f['layer_{}'.format(k)]
+            weights = [g['param_{}'.format(p)] for p in range(g.attrs['nb_params'])]
+            model.layers[k].set_weights(weights)
+        f.close()
+        print('Model loaded.')
+           """
         self.model = Sequential()
         self.model.add(Convolution2D(int(nb_filters / 2), kernel_size, padding='valid',
                                 input_shape=input_shape, activation='relu',
