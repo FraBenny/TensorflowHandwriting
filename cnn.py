@@ -12,7 +12,7 @@ class CharRecognizer(object):
     def __init__(self):
         self.model = None
 
-    def train_model(self, X, y, batch_size=1, epochs=1):
+    def train_model(self, X, y, batch_size=1, epochs=10):
         """Train a Convolutional Neural Network to recognize handwritten characters.
 
         Args:
