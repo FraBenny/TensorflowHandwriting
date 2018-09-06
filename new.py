@@ -18,7 +18,7 @@ def vgg16_model(img_rows, img_cols, channel=3, num_classes=None):
       num_classes - number of categories for our classification task
     """
     model = Sequential()
-    model.add(ZeroPadding2D((1, 1), input_shape=(3, 224, 224)))
+    model.add(ZeroPadding2D((1, 1), input_shape=(1, 28, 28)))
     model.add(Convolution2D(64, 3, 3, activation='relu'))
     model.add(ZeroPadding2D((1, 1)))
     model.add(Convolution2D(64, 3, 3, activation='relu'))
@@ -53,6 +53,7 @@ def vgg16_model(img_rows, img_cols, channel=3, num_classes=None):
     model.add(ZeroPadding2D((1, 1)))
     model.add(Convolution2D(512, 3, 3, activation='relu'))
     model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+    #model.load_weights('emnist/vgg16_weights.h5')
 
     weights_path = 'emnist/vgg16_weights.h5'
     f = h5py.File(weights_path)
@@ -75,7 +76,7 @@ def vgg16_model(img_rows, img_cols, channel=3, num_classes=None):
     model.add(Dropout(0.5))
     model.add(Dense(4096, activation='relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(1000, activation='softmax'))
+    model.add(Dense(10, activation='softmax'))
 
     # Loads ImageNet pre-trained data
 
@@ -110,10 +111,12 @@ if __name__ == '__main__':
     # Load Cifar10 data. Please implement your own load_data() module for your own dataset
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     x_test.reshape([-1, 1, 28, 28])
-    y_test.reshape([-1, 1, 28, 28])
+    x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
+    x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
+    #y_test.reshape([-1, 1, 28, 28])
     # Load our model
     model = vgg16_model(img_rows, img_cols, channel, num_classes)
-    print ("transfer made")
+    print("transfer made")
     # Start Fine-tuning
     model.fit(x_train, y_train,
               batch_size=batch_size,
