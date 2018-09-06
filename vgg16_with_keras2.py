@@ -1,11 +1,10 @@
 from __future__ import division, print_function
-
-import os, json
+from keras.datasets import mnist
 from glob import glob
 import numpy as np
 from scipy import misc, ndimage
 from scipy.ndimage.interpolation import zoom
-
+import h5py
 from keras import backend as K
 from keras.layers.normalization import BatchNormalization
 from keras.utils.data_utils import get_file
@@ -28,9 +27,14 @@ class Vgg16():
 
 
     def __init__(self):
-        self.FILE_PATH = '/emnist/'
+        self.FILE_PATH = 'emnist/'
         self.create()
-        #self.get_classes()
+        (x_train, y_train), (x_test, y_test) = mnist.load_data()
+        x_train = x_train.reshape(x_train.shape[0], 1, 28, 28)
+        x_test = x_test.reshape(x_test.shape[0], 1, 28, 28)
+        self.compile()
+        self.fit_data(x_train, y_train, x_test, y_test)
+        self.get_classes()
 
 
     '''def get_classes(self):
@@ -75,11 +79,24 @@ class Vgg16():
         model.add(Flatten())
         self.FCBlock()
         self.FCBlock()
-        model.add(Dense(1000, activation='softmax'))
+        model.add(Dense(10, activation='softmax'))
 
-        fname = 'vgg16_weights'
-        model.load_weights(get_file(fname, self.FILE_PATH+fname)) #, cache_subdir='models'))
-
+        fname = 'vgg16_weights.h5'
+        # model.load_weights(self.FILE_PATH+fname) #, cache_subdir='models'))
+        weights_path = 'emnist/vgg16_weights.h5'
+        f = h5py.File(weights_path)
+        for k in range(f.attrs['nb_layers']):
+            if k >= len(model.layers):
+                # we don't look at the last (fully-connected) layers in the savefile
+                break
+            g = f['layer_{}'.format(k)]
+            weights = [g['param_{}'.format(p)] for p in range(g.attrs['nb_params'])]
+            layer = model.layers[k]
+            if isinstance(layer, Conv2D):
+                weights[0] = np.transpose(np.array(weights[0])[:, :, ::-1, ::-1], (2, 3, 1, 0))
+            layer.set_weights(weights)
+        f.close()
+        print('model created')
 
     def get_batches(self, path, gen=image.ImageDataGenerator(), shuffle=True, batch_size=8, class_mode='categorical'):
         return gen.flow_from_directory(path, target_size=(224,224),
@@ -122,3 +139,8 @@ class Vgg16():
     def test(self, path, batch_size=8):
         test_batches = self.get_batches(path, shuffle=False, batch_size=batch_size, class_mode=None)
         return test_batches, self.model.predict_generator(test_batches, int(np.ceil(test_batches.samples/batch_size)))
+
+
+if __name__ == '__main__':
+    ex = Vgg16()
+    ex.__init__()
