@@ -28,9 +28,9 @@ class Vgg16():
 
 
     def __init__(self):
-        self.FILE_PATH = 'http://files.fast.ai/models/'
+        self.FILE_PATH = '/emnist/'
         self.create()
-        self.get_classes()
+        #self.get_classes()
 
 
     '''def get_classes(self):
@@ -77,8 +77,8 @@ class Vgg16():
         self.FCBlock()
         model.add(Dense(1000, activation='softmax'))
 
-        fname = 'vgg16.h5'
-        model.load_weights(get_file(fname, self.FILE_PATH+fname, cache_subdir='models'))
+        fname = 'vgg16_weights'
+        model.load_weights(get_file(fname, self.FILE_PATH+fname)) #, cache_subdir='models'))
 
 
     def get_batches(self, path, gen=image.ImageDataGenerator(), shuffle=True, batch_size=8, class_mode='categorical'):
@@ -121,4 +121,4 @@ class Vgg16():
     # Keras2
     def test(self, path, batch_size=8):
         test_batches = self.get_batches(path, shuffle=False, batch_size=batch_size, class_mode=None)
-return test_batches, self.model.predict_generator(test_batches, int(np.ceil(test_batches.samples/batch_size)))
+        return test_batches, self.model.predict_generator(test_batches, int(np.ceil(test_batches.samples/batch_size)))
