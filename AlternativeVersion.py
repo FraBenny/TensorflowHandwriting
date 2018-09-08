@@ -9,7 +9,7 @@ def main(train):
     nn = cnn_nuovo.NeuralNetwork()
 
     if train:
-        nn.train(trainingData, trainingLabels, epochs=10)
+        nn.train(trainingData, trainingLabels, epochs=2)
         nn.saveModel()   #viene eseguito il salvataggio del modello
     else:
         #nel caso in cui bisogna riprendere l'esecuzione da un certo punto carica il modello dall'apposito file
@@ -22,6 +22,7 @@ def main(train):
 
     preds = nn.readText(testData, mapping)
     print(preds)
+
 
     #Si valuta la precisione raggiunta dal modello
     nn.evaluate(trainingData, trainingLabels)

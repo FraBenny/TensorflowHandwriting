@@ -11,12 +11,12 @@ class NeuralNetwork(object):
     def __init__(self):
         self.model = None
 
-    def train(self, data, labels, batch_size=128, epochs=10):
+    def train(self, data, labels, batch_size=128, epochs=2):
         #Il modello viene allenato
         self.getModel()
         callbacks.Callback()
         checkpoint = callbacks.ModelCheckpoint(filepath=getcwd()+'weights.{epoch:02d}.hdf5', monitor='val_loss', verbose=0, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-        #self.model.load_weights(filepath=getcwd()+'weights.04.hdf5', by_name=False)
+        self.model.load_weights(filepath=getcwd()+'weights.10.hdf5', by_name=False)
         self.model.fit(data, labels, batch_size=batch_size, epochs=epochs, callbacks=[checkpoint])
         print(checkpoint)
 
@@ -53,9 +53,9 @@ class NeuralNetwork(object):
                                 kernel_initializer='he_normal', data_format = 'channels_first'))
         self.model.add(MaxPooling2D(pool_size=pool_size))
         self.model.add(Flatten())
-        self.model.add(Dense(256, activation='relu', kernel_initializer='he_normal'))
+        self.model.add(Dense(250, activation='relu', kernel_initializer='he_normal'))
         self.model.add(Dropout(0.1))
-        self.model.add(Dense(128, activation='relu', kernel_initializer='he_normal'))
+        self.model.add(Dense(125, activation='relu', kernel_initializer='he_normal'))
         self.model.add(Dropout(0.2))
         self.model.add(Dense(classes, activation='softmax', kernel_initializer='he_normal'))
-        self.model.compile(loss='categorical_crossentropy', optimizer='adamax', metrics=['accuracy'])
+        self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
